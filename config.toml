@@ -1,0 +1,6 @@
+baseURL = "www.sgarcia.dev"
+languageCode = "en-us"
+theme = "owntheme"
+
+#Page Title (tab title)
+title = "My New Hugo Site"
