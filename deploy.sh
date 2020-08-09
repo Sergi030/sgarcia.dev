@@ -30,9 +30,8 @@ fi
 cd public
 
 # Check if there is any change
-git diff-index --quiet HEAD
-if [ $? -ne 0 ]
-    then
+if ! git diff --quiet remotes/origin/HEAD
+then
 
     # Add changes to git.
     fancyMessage "Adding Changes"
