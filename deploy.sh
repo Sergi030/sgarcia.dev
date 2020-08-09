@@ -42,9 +42,6 @@ if [ $? -ne 0 ]
     # Commit changes.
     fancyMessage "Commit the new build"
     msg="rebuilding site $(date)"
-    if [ -n "$*" ]; then
-        msg="$*"
-    fi
     git commit -m "$msg"
     checkCommand "Cannot commit the changes"
 
