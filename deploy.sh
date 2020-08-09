@@ -31,7 +31,7 @@ cd public
 
 # Check if there is any change
 git diff-index --quiet HEAD
-if [ $? -eq 0 ]
+if [ $? -ne 0 ]
     then
 
     # Add changes to git.
