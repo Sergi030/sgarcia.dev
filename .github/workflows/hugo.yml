@@ -28,7 +28,7 @@ jobs:
           eval `ssh-agent -s` && ssh-add ~/id_rsa && git submodule update --init --recursive && git submodule foreach "git checkout master && git pull"
  
       - name: Building Site
-        uses: klakegg/actions-hugo@1.0.0      
+        uses: jakejarvis/hugo-build-action@v0.74.3    
       
       - name: Deploy Site
         env:
