@@ -25,7 +25,7 @@ jobs:
               
       - name: Checkout submodules
         run: |
-          eval `ssh-agent -s` && ssh-add ~/id_rsa && git submodule update --init --recursive
+          eval `ssh-agent -s` && ssh-add ~/id_rsa && git submodule update --init --recursive && git submodule foreach "git checkout master && git pull"
  
       - name: Building Site
         uses: klakegg/actions-hugo@1.0.0      
