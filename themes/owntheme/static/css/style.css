@@ -7,6 +7,14 @@ body {
     padding: 0;
 }
 
+img[src$='#vh-center'] {
+  display: block;
+  margin: 8.0rem auto;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
 .navbar {
     display: flex;
     position: relative;
@@ -67,6 +75,12 @@ body {
     background-color: white;
     border-radius: 10px;
 }
+
+.invisible-link {
+    color: white;
+    text-decoration: none;
+}
+
 
 @media (max-width: 800px) {
     .navbar {

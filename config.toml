@@ -1,4 +1,4 @@
-baseURL = "www.sgarcia.dev"
+baseURL = "https://www.sgarcia.dev/"
 languageCode = "en-us"
 theme = "owntheme"
 
