@@ -9,7 +9,7 @@
         <div class="navbar-links">
             <ul>
                 {{ range sort .Site.Menus.main.ByWeight }}
-                <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+                <li><a href="{{.URL | relURL }}">{{ .Name }}</a></li>
                 {{ end }}
             </ul>
         </div>
