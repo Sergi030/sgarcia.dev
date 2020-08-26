@@ -4,9 +4,15 @@ theme = "owntheme"
 
 #Page Title (tab title)
 title = "Sergi García Ibáñez"
-
 sectionPagesMenu = "menu"
 
+
+[ params ]
+[ params.social ]
+    email = "me@sgarcia.dev"
+    github = "Sergi030"
+    gitlab = "Mehcachis"
+    linkedin = "sergi-garcia-ibanez"
 
 [menu]
   [[menu.main]]
