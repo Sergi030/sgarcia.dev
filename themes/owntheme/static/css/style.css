@@ -90,6 +90,9 @@ img[src$='#vh-center'] {
         margin: 0 auto;
         padding-bottom: 1rem;
     }
+    .social a {
+        text-decoration: none;
+    }
     .social svg {
         margin: 0.3rem;
     }
