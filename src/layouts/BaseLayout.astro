@@ -28,7 +28,7 @@ const { title, description, image } = Astro.props;
     <ConstellationBg />
 
     <!-- Scanline effect — subtle -->
-    <div class="fixed inset-0 pointer-events-none z-[60] opacity-[0.015]" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);"></div>
+    <div class="fixed inset-0 pointer-events-none z-[60] opacity-[0.015]" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, var(--scanline-color) 2px, var(--scanline-color) 4px);"></div>
 
     <div class="relative z-10 flex flex-col min-h-screen">
       <Header />
