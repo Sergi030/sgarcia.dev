@@ -1,5 +1,6 @@
 ---
 import { features } from '../config';
+import '../styles/global.css';
 
 interface Props {
   title: string;
@@ -55,5 +56,3 @@ const ogImage = image || `/og/${ogSlug}.png`;
 <!-- RSS -->
 {features.blog && <link rel="alternate" type="application/rss+xml" title="Sergi's Blog" href="/rss.xml" />}
 
-<!-- Global Styles -->
-<link rel="stylesheet" href="/src/styles/global.css" />
