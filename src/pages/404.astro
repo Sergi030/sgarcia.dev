@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { navLinks } from '../data/navigation';
+---
+
+<BaseLayout title="404" description="Page not found.">
+  <section class="pt-16 pb-16 flex flex-col items-center text-center">
+    <!-- ASCII art -->
+    <pre class="font-mono text-[var(--accent)] text-xs sm:text-sm opacity-40 mb-10 leading-tight animate-fade-up select-none" aria-hidden="true">{`
+  _  _    ___  _  _
+ | || |  / _ \\| || |
+ | || |_| | | | || |_
+ |__   _| | | |__   _|
+    | | | |_| |  | |
+    |_|  \\___/   |_|
+`}</pre>
+
+    <!-- Error message -->
+    <div class="font-mono text-sm space-y-2 mb-10 animate-fade-up stagger-2">
+      <p class="text-[var(--accent)]">
+        bash: page: command not found
+      </p>
+      <p class="text-[var(--text-muted)]">
+        The page you're looking for doesn't exist or has been moved.
+      </p>
+    </div>
+
+    <!-- Suggestions -->
+    <div class="font-mono text-sm animate-fade-up stagger-3">
+      <p class="text-[var(--text-muted)] mb-4">Did you mean:</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        {navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="px-4 py-2 border border-[var(--border)] rounded-md text-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 hover:bg-[var(--accent-dim)] transition-all duration-200"
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Return code -->
+    <p class="font-mono text-xs text-[var(--text-muted)] opacity-30 mt-12 animate-fade-up stagger-4">
+      exit code: 404
+    </p>
+  </section>
+</BaseLayout>

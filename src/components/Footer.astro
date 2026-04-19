@@ -1,0 +1,29 @@
+---
+import { socialLinks } from '../data/navigation';
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[var(--border)] mt-24">
+  <div class="max-w-3xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[var(--text-muted)]">
+    <p>
+      <span class="text-[var(--accent)] opacity-60">&gt;</span> &copy; {year} sergi garcia ibañez
+    </p>
+    <div class="flex items-center gap-3 flex-wrap justify-center">
+      {socialLinks.map((link, i) => (
+        <>
+          {i > 0 && <span class="opacity-30">/</span>}
+          <a
+            href={link.href}
+            target={link.href.startsWith('http') ? '_blank' : undefined}
+            rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            class="hover:text-[var(--accent)] transition-colors"
+          >
+            {link.label}
+          </a>
+        </>
+      ))}
+      <span class="opacity-30 hidden sm:inline">/</span>
+      <span class="hidden sm:inline opacity-50 text-[10px]"><kbd class="border border-[var(--border)] px-1 py-0.5 rounded">ctrl+k</kbd> search · <kbd class="border border-[var(--border)] px-1 py-0.5 rounded">ctrl+`</kbd> terminal</span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { features } from '../../config';
+
+if (!features.blog) return Astro.redirect('/404');
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Blog" description="All posts by Sergi Garcia Ibañez.">
+  <section class="pt-4">
+    <!-- Terminal header -->
+    <div class="font-mono text-xs text-[var(--text-muted)] mb-6 animate-fade-up">
+      <span class="text-[var(--accent)]">mehcachis@barcelona</span><span class="opacity-40">:</span><span class="text-[var(--text)]">~/blog</span><span class="opacity-40">$</span>
+      <span class="ml-1">ls -lt</span>
+    </div>
+
+    <h1 class="font-mono text-2xl sm:text-3xl font-bold text-[var(--text)] mb-1 tracking-tight animate-fade-up stagger-1">
+      Blog
+    </h1>
+    <p class="font-mono text-sm text-[var(--text-muted)] mb-8 animate-fade-up stagger-1">
+      total {posts.length}
+    </p>
+
+    {posts.length > 0 ? (
+      <div class="border border-[var(--border)] rounded-md divide-y divide-[var(--border)] bg-[var(--bg-alt)] animate-fade-up stagger-2">
+        {posts.map((post, i) => (
+          <PostCard post={post} index={i} />
+        ))}
+      </div>
+    ) : (
+      <p class="font-mono text-sm text-[var(--text-muted)] italic animate-fade-up stagger-2">
+        <span class="text-[var(--accent)] opacity-60">&gt;</span> /dev/null — no posts yet
+      </p>
+    )}
+  </section>
+</BaseLayout>

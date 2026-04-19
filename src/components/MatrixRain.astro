@@ -1,0 +1,103 @@
+---
+---
+
+<!-- Konami Code: ↑↑↓↓←→←→BA triggers Matrix rain -->
+<script>
+  function setupKonami() {
+    const code = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    let pos = 0;
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === code[pos]) {
+        pos++;
+        if (pos === code.length) {
+          pos = 0;
+          triggerMatrix();
+        }
+      } else {
+        pos = 0;
+      }
+    }
+
+    document.addEventListener('keydown', onKey);
+
+    function triggerMatrix() {
+      const canvas = document.createElement('canvas');
+      canvas.style.cssText = 'position:fixed;inset:0;z-index:9999;pointer-events:none;';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d')!;
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/{}[];=+-_mehcachis';
+      const fontSize = 14;
+      const columns = Math.floor(canvas.width / fontSize);
+      const drops: number[] = new Array(columns).fill(0).map(() => Math.random() * -50);
+
+      // Audio-like beep feel
+      let frame = 0;
+      const maxFrames = 300; // ~5 seconds at 60fps
+
+      function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ffc8';
+        ctx.font = `${fontSize}px monospace`;
+
+        for (let i = 0; i < drops.length; i++) {
+          const char = chars[Math.floor(Math.random() * chars.length)];
+          const x = i * fontSize;
+          const y = drops[i] * fontSize;
+
+          // Lead character brighter
+          ctx.fillStyle = Math.random() > 0.1 ? '#00ffc8' : '#ffffff';
+          ctx.globalAlpha = 0.8 + Math.random() * 0.2;
+          ctx.fillText(char, x, y);
+          ctx.globalAlpha = 1;
+
+          if (y > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+
+        // Draw message in center after a moment
+        if (frame > 60) {
+          const msg = 'WAKE UP, MEHCACHIS...';
+          const visibleChars = Math.min(Math.floor((frame - 60) / 4), msg.length);
+          const text = msg.slice(0, visibleChars);
+
+          ctx.fillStyle = '#000';
+          ctx.globalAlpha = 0.7;
+          const textWidth = ctx.measureText(msg).width + 40;
+          ctx.fillRect(canvas.width / 2 - textWidth / 2, canvas.height / 2 - 25, textWidth, 50);
+
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = '#00ffc8';
+          ctx.font = 'bold 24px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 8);
+          ctx.textAlign = 'start';
+          ctx.font = `${fontSize}px monospace`;
+        }
+
+        frame++;
+        if (frame < maxFrames) {
+          requestAnimationFrame(draw);
+        } else {
+          // Fade out
+          canvas.style.transition = 'opacity 1s';
+          canvas.style.opacity = '0';
+          setTimeout(() => canvas.remove(), 1000);
+        }
+      }
+
+      draw();
+    }
+  }
+
+  import { onReady } from '../utils/onReady';
+  onReady(setupKonami);
+</script>

@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { features } from '../../../config';
+
+export async function getStaticPaths() {
+  if (!features.blog) return [];
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const tags = new Set<string>();
+  posts.forEach((post) => post.data.tags.forEach((tag) => tags.add(tag)));
+
+  return [...tags].map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag}`} description={`Posts tagged with "${tag}".`}>
+  <section class="pt-4">
+    <div class="font-mono text-xs text-[var(--text-muted)] mb-6 animate-fade-up">
+      <span class="text-[var(--accent)]">mehcachis@barcelona</span><span class="opacity-40">:</span><span class="text-[var(--text)]">~/blog</span><span class="opacity-40">$</span>
+      <span class="ml-1">grep -l "tags:.*{tag}" *.md</span>
+    </div>
+
+    <div class="flex items-baseline gap-3 mb-2 animate-fade-up stagger-1">
+      <h1 class="font-mono text-2xl sm:text-3xl font-bold text-[var(--text)] tracking-tight">
+        --{tag}
+      </h1>
+    </div>
+    <p class="font-mono text-sm text-[var(--text-muted)] mb-8 animate-fade-up stagger-1">
+      {posts.length} post{posts.length !== 1 ? 's' : ''}
+      <span class="opacity-40 mx-2">|</span>
+      <a href="/blog/tags/" class="text-[var(--accent-text)] hover:underline underline-offset-2">all tags</a>
+    </p>
+
+    <div class="border border-[var(--border)] rounded-md divide-y divide-[var(--border)] bg-[var(--bg-alt)] animate-fade-up stagger-2">
+      {posts.map((post, i) => (
+        <PostCard post={post} index={i} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,44 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CommandPalette from '../components/CommandPalette.astro';
+import ConstellationBg from '../components/ConstellationBg.astro';
+import Terminal from '../components/Terminal.astro';
+import MatrixRain from '../components/MatrixRain.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <BaseHead title={title} description={description} image={image} />
+    <ClientRouter />
+  </head>
+  <body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex flex-col font-sans antialiased selection:bg-[var(--accent)]/20 selection:text-[var(--accent)] cursor-terminal">
+    <!-- Interactive constellation background -->
+    <ConstellationBg />
+
+    <!-- Scanline effect — subtle -->
+    <div class="fixed inset-0 pointer-events-none z-[60] opacity-[0.015]" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);"></div>
+
+    <div class="relative z-10 flex flex-col min-h-screen">
+      <Header />
+      <main class="flex-1 max-w-3xl mx-auto px-6 w-full py-14">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <CommandPalette />
+    <Terminal />
+    <MatrixRain />
+  </body>
+</html>

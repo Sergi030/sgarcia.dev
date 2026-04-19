@@ -1,0 +1,93 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import { navLinks } from '../data/navigation';
+
+const pathname = Astro.url.pathname;
+const links = navLinks;
+---
+
+<header class="sticky top-0 z-50 backdrop-blur-xl bg-[var(--bg)]/85 border-b border-[var(--border)]">
+  <nav class="max-w-3xl mx-auto px-6 h-12 flex items-center justify-between font-mono text-sm">
+    <a
+      href="/"
+      class="text-[var(--accent)] hover:text-[var(--text)] transition-colors tracking-tight"
+    >
+      ~/sergi
+    </a>
+
+    <!-- Desktop nav -->
+    <div class="hidden sm:flex items-center gap-0.5">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'px-3 py-1 rounded transition-colors',
+            link.match(pathname)
+              ? 'text-[var(--accent)] bg-[var(--accent-dim)]'
+              : 'text-[var(--text-muted)] hover:text-[var(--text)]',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+      <div class="w-px h-4 bg-[var(--border)] mx-2"></div>
+      <ThemeToggle />
+    </div>
+
+    <!-- Mobile controls -->
+    <div class="flex sm:hidden items-center gap-1">
+      <ThemeToggle />
+      <button
+        id="mobile-menu-btn"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+        class="w-8 h-8 flex items-center justify-center rounded text-[var(--text-muted)] hover:text-[var(--accent)] border border-transparent hover:border-[var(--border)] transition-all cursor-pointer"
+      >
+        <svg id="menu-icon-open" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+        </svg>
+        <svg id="menu-icon-close" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu panel -->
+  <div id="mobile-menu" class="hidden sm:hidden border-t border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur-xl">
+    <div class="max-w-3xl mx-auto px-6 py-3 flex flex-col gap-1 font-mono text-sm">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'px-3 py-2 rounded transition-colors',
+            link.match(pathname)
+              ? 'text-[var(--accent)] bg-[var(--accent-dim)]'
+              : 'text-[var(--text-muted)] hover:text-[var(--text)]',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  function setupMobileMenu() {
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('menu-icon-open');
+    const iconClose = document.getElementById('menu-icon-close');
+
+    btn?.addEventListener('click', () => {
+      const isOpen = menu?.classList.toggle('hidden') === false;
+      btn.setAttribute('aria-expanded', String(isOpen));
+      iconOpen?.classList.toggle('hidden', isOpen);
+      iconClose?.classList.toggle('hidden', !isOpen);
+    });
+  }
+
+  import { onReady } from '../utils/onReady';
+  onReady(setupMobileMenu);
+</script>

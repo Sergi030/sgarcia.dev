@@ -1,5 +1,0 @@
-[submodule "public"]
-	path = public
-	url = git@github.com:Sergi030/sergi030.github.io.git
-	branch = master
-	update = merge

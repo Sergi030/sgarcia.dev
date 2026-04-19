@@ -1,0 +1,202 @@
+---
+import { sitePages, siteSocials } from '../data/navigation';
+import { features } from '../config';
+const searchData = [
+  ...sitePages.map(p => ({ label: p.label, href: p.href, type: 'page' })),
+  ...siteSocials.map(s => ({ label: s.label, href: s.href, type: 'link' })),
+];
+const searchConfig = { pagefindEnabled: features.blog };
+---
+<script type="application/json" id="search-data" set:html={JSON.stringify(searchData)} />
+<script type="application/json" id="search-config" set:html={JSON.stringify(searchConfig)} />
+
+<!-- Search Overlay (Ctrl+K) -->
+<div id="search-palette" class="fixed inset-0 z-[200] hidden" role="dialog" aria-modal="true" aria-label="Search">
+  <div id="search-backdrop" class="absolute inset-0 bg-black/70"></div>
+
+  <div class="relative max-w-xl w-full mx-auto px-4 top-[30%] -translate-y-1/2">
+    <!-- Search box -->
+    <div class="rounded-lg overflow-hidden shadow-2xl shadow-[var(--accent)]/5 border border-[var(--border)] bg-[var(--bg)]">
+      <!-- Input row -->
+      <div class="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)]">
+        <svg class="w-4 h-4 text-[var(--text-muted)] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input
+          id="search-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder={features.blog ? 'Search pages & posts...' : 'Search pages...'}
+          class="w-full bg-transparent text-[var(--text)] outline-none font-mono text-sm placeholder:text-[var(--text-muted)]"
+        />
+        <kbd class="text-[10px] font-mono text-[var(--text-muted)] border border-[var(--border)] rounded px-1.5 py-0.5 shrink-0">esc</kbd>
+      </div>
+
+      <!-- Results -->
+      <div id="search-results" class="max-h-[50vh] overflow-y-auto"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { onReady } from '../utils/onReady';
+
+  interface SearchItem {
+    label: string;
+    href: string;
+    type: string;
+    excerpt?: string;
+  }
+
+  const pages: SearchItem[] = JSON.parse(document.getElementById('search-data')?.textContent || '[]');
+  const searchConfig = JSON.parse(document.getElementById('search-config')?.textContent || '{}');
+
+  let pagefind: any = null;
+  let searchActive = 0;
+  let searchResults: SearchItem[] = [];
+  let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  async function loadPf() {
+    if (!searchConfig.pagefindEnabled) return null;
+    if (pagefind) return pagefind;
+    try {
+      const mod = await import(/* @vite-ignore */ `${window.location.origin}/pagefind/pagefind.js`);
+      pagefind = mod;
+      await pagefind.init();
+    } catch { pagefind = null; }
+    return pagefind;
+  }
+
+  function setupSearch() {
+    const palette = document.getElementById('search-palette');
+    const backdrop = document.getElementById('search-backdrop');
+    const input = document.getElementById('search-input') as HTMLInputElement;
+    const resultsEl = document.getElementById('search-results');
+    if (!palette || !input || !resultsEl) return;
+
+    function open() {
+      palette!.classList.remove('hidden');
+      input!.value = '';
+      searchActive = 0;
+      showDefault();
+      requestAnimationFrame(() => input!.focus());
+      loadPf();
+    }
+
+    function close() {
+      palette!.classList.add('hidden');
+    }
+
+    function go(href: string) {
+      close();
+      if (href.startsWith('http') || href.startsWith('mailto:')) {
+        window.open(href, '_blank');
+      } else {
+        window.location.href = href;
+      }
+    }
+
+    function showDefault() {
+      searchResults = [...pages];
+      render();
+    }
+
+    function render() {
+      if (searchResults.length === 0) {
+        resultsEl!.innerHTML = '<div class="px-4 py-6 text-center text-[var(--text-muted)] font-mono text-xs">No results found</div>';
+        return;
+      }
+      searchActive = Math.max(0, Math.min(searchActive, searchResults.length - 1));
+
+      let html = '';
+      searchResults.forEach((item, i) => {
+        const active = i === searchActive;
+        const icon = item.type === 'page' ? '~/' : item.type === 'link' ? '↗' : '▸';
+        const iconColor = item.type === 'page' ? 'text-blue-400' : item.type === 'link' ? 'text-orange-400' : 'text-[var(--accent)]';
+
+        html += `<div data-href="${item.href}" class="search-item flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${active ? 'bg-[var(--accent-dim)]' : 'hover:bg-[var(--surface)]'}">
+          <span class="text-xs ${iconColor} w-4 text-center shrink-0 font-mono">${icon}</span>
+          <div class="flex-1 min-w-0">
+            <span class="font-mono text-sm ${active ? 'text-[var(--accent)]' : 'text-[var(--text)]'}">${item.label}</span>
+            ${item.excerpt ? `<div class="text-[11px] text-[var(--text-muted)] mt-0.5 truncate font-mono">${item.excerpt}</div>` : ''}
+          </div>
+          ${active ? '<span class="text-[10px] text-[var(--text-muted)] font-mono">↵</span>' : ''}
+        </div>`;
+      });
+      resultsEl!.innerHTML = html;
+
+      resultsEl!.querySelectorAll('.search-item').forEach((el) => {
+        el.addEventListener('click', () => go((el as HTMLElement).dataset.href!));
+      });
+    }
+
+    async function search(query: string) {
+      const q = query.toLowerCase().trim();
+      if (!q) { showDefault(); return; }
+
+      const matched = pages.filter((p) =>
+        p.label.toLowerCase().includes(q) || p.href.toLowerCase().includes(q)
+      );
+
+      let blogResults: SearchItem[] = [];
+      const pf = await loadPf();
+      if (pf) {
+        try {
+          const s = await pf.search(q);
+          const top = s.results.slice(0, 5);
+          const data = await Promise.all(top.map((r: any) => r.data()));
+          blogResults = data.map((d: any) => ({
+            label: d.meta?.title || 'Untitled',
+            href: d.url,
+            type: 'post',
+            excerpt: d.excerpt ? d.excerpt.replace(/<\/?mark>/g, '').slice(0, 80) : undefined,
+          }));
+        } catch {}
+      }
+
+      searchResults = [...matched, ...blogResults];
+      searchActive = 0;
+      render();
+    }
+
+    // Bind document-level shortcut once; resolve palette at fire time so
+    // view-transition swaps don't leave us toggling a detached palette.
+    if (!(window as any).__searchShortcutBound) {
+      (window as any).__searchShortcutBound = true;
+      document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          const current = document.getElementById('search-palette');
+          const currentInput = document.getElementById('search-input') as HTMLInputElement | null;
+          if (!current) return;
+          if (current.classList.contains('hidden')) {
+            current.classList.remove('hidden');
+            if (currentInput) {
+              currentInput.value = '';
+              requestAnimationFrame(() => currentInput.focus());
+            }
+          } else {
+            current.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    backdrop?.addEventListener('click', close);
+
+    input.addEventListener('input', () => {
+      if (searchTimeout) clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => search(input.value), 100);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { close(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); searchActive = Math.max(0, searchActive - 1); render(); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); searchActive = Math.min(searchResults.length - 1, searchActive + 1); render(); }
+      else if (e.key === 'Enter' && searchResults[searchActive]) { go(searchResults[searchActive].href); }
+    });
+  }
+
+  onReady(setupSearch);
+</script>

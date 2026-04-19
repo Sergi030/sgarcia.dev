@@ -1,0 +1,153 @@
+---
+---
+
+<canvas id="constellation-canvas" class="fixed inset-0 z-0 pointer-events-none"></canvas>
+
+<script>
+  function initConstellation() {
+    const canvas = document.getElementById('constellation-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Prevent multiple instances
+    if ((canvas as any).__initialized) return;
+    (canvas as any).__initialized = true;
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let mouse = { x: width / 2, y: height / 2 };
+    let animationId: number;
+
+    const PARTICLE_COUNT = Math.min(Math.floor((width * height) / 18000), 80);
+    const CONNECTION_DIST = 150;
+    const MOUSE_RADIUS = 200;
+    const ACCENT = { r: 0, g: 255, b: 200 }; // #00ffc8
+
+    interface Particle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      radius: number;
+    }
+
+    const particles: Particle[] = [];
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    function createParticles() {
+      particles.length = 0;
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          radius: Math.random() * 1.5 + 0.5,
+        });
+      }
+    }
+
+    function draw() {
+      ctx!.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        // Update position
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around edges
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        // Mouse repulsion (subtle)
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MOUSE_RADIUS && dist > 0) {
+          const force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS * 0.015;
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
+        }
+
+        // Dampen velocity
+        p.vx *= 0.999;
+        p.vy *= 0.999;
+
+        // Draw particle
+        const mouseProximity = Math.max(0, 1 - dist / MOUSE_RADIUS);
+        const alpha = 0.15 + mouseProximity * 0.4;
+        ctx!.beginPath();
+        ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx!.fillStyle = `rgba(${ACCENT.r}, ${ACCENT.g}, ${ACCENT.b}, ${alpha})`;
+        ctx!.fill();
+
+        // Draw connections
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const cdx = p.x - p2.x;
+          const cdy = p.y - p2.y;
+          const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+
+          if (cdist < CONNECTION_DIST) {
+            // Stronger connection near mouse
+            const midX = (p.x + p2.x) / 2;
+            const midY = (p.y + p2.y) / 2;
+            const mouseDist = Math.sqrt((midX - mouse.x) ** 2 + (midY - mouse.y) ** 2);
+            const mouseBoost = Math.max(0, 1 - mouseDist / MOUSE_RADIUS) * 0.12;
+            const lineAlpha = (1 - cdist / CONNECTION_DIST) * 0.06 + mouseBoost;
+
+            ctx!.beginPath();
+            ctx!.moveTo(p.x, p.y);
+            ctx!.lineTo(p2.x, p2.y);
+            ctx!.strokeStyle = `rgba(${ACCENT.r}, ${ACCENT.g}, ${ACCENT.b}, ${lineAlpha})`;
+            ctx!.lineWidth = 0.5;
+            ctx!.stroke();
+          }
+        }
+      }
+
+      animationId = requestAnimationFrame(draw);
+    }
+
+    // Event listeners
+    window.addEventListener('resize', () => {
+      resize();
+      if (particles.length !== Math.min(Math.floor((width * height) / 18000), 80)) {
+        createParticles();
+      }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    // Reduce motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    resize();
+    createParticles();
+    draw();
+
+    // Cleanup on navigation
+    document.addEventListener('astro:before-swap', () => {
+      cancelAnimationFrame(animationId);
+      (canvas as any).__initialized = false;
+    });
+  }
+
+  import { onReady } from '../utils/onReady';
+  onReady(initConstellation);
+</script>

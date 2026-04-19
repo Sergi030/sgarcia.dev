@@ -1,0 +1,123 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import CopyCode from '../components/CopyCode.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  heroImage?: string;
+  tags?: string[];
+  minutesRead?: string;
+}
+
+const { title, description, pubDate, updatedDate, heroImage, tags = [], minutesRead } = Astro.props;
+
+const formattedDate = pubDate.toLocaleDateString('en-CA');
+const formattedLongDate = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={title} description={description} image={heroImage}>
+  <!-- Reading progress bar -->
+  <div id="progress-bar" class="fixed top-0 left-0 h-0.5 bg-[var(--accent)] z-[100] transition-none" style="width: 0%"></div>
+
+  <article>
+    <!-- Terminal-style post header -->
+    <header class="mb-10 animate-fade-up">
+      <div class="font-mono text-xs text-[var(--text-muted)] mb-6 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span><span class="text-[var(--accent)] opacity-60">$</span> cat ./blog/{formattedDate}-post.md</span>
+      </div>
+
+      <h1 class="font-mono text-2xl sm:text-3xl font-bold leading-tight text-[var(--text)] mb-4 tracking-tight">
+        {title}
+      </h1>
+
+      <p class="text-[var(--text-muted)] text-base leading-relaxed mb-4">
+        {description}
+      </p>
+
+      <div class="flex flex-wrap items-center gap-3 font-mono text-xs text-[var(--text-muted)]">
+        <time datetime={pubDate.toISOString()}>
+          <span class="text-[var(--accent)] opacity-60">date:</span> {formattedLongDate}
+        </time>
+        {minutesRead && (
+          <>
+            <span class="opacity-30">|</span>
+            <span><span class="text-[var(--accent)] opacity-60">read:</span> {minutesRead}</span>
+          </>
+        )}
+        {updatedDate && (
+          <>
+            <span class="opacity-30">|</span>
+            <span><span class="text-[var(--accent)] opacity-60">updated:</span> {formattedUpdatedDate}</span>
+          </>
+        )}
+      </div>
+
+      {tags.length > 0 && (
+        <div class="flex flex-wrap gap-1.5 mt-4">
+          {tags.map((tag) => (
+            <a href={`/blog/tags/${tag}/`} class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--tag-bg)] text-[var(--tag-text)] border border-[var(--accent)]/10 hover:bg-[var(--accent-dim)] hover:text-[var(--accent)] transition-colors">
+              --{tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </header>
+
+    {heroImage && (
+      <img
+        src={heroImage}
+        alt={title}
+        class="w-full rounded-md mb-10 border border-[var(--border)] animate-fade-up stagger-2"
+      />
+    )}
+
+    <!-- Divider -->
+    <div class="flex items-center gap-3 mb-10 font-mono text-xs text-[var(--text-muted)] opacity-40 animate-fade-up stagger-2">
+      <div class="flex-1 border-t border-dashed border-[var(--border)]"></div>
+      <span>EOF header</span>
+      <div class="flex-1 border-t border-dashed border-[var(--border)]"></div>
+    </div>
+
+    <!-- Post content -->
+    <div class="prose max-w-prose animate-fade-up stagger-3" data-pagefind-body>
+      <slot />
+    </div>
+    <CopyCode />
+  </article>
+
+  <!-- Back link -->
+  <div class="mt-16 pt-6 border-t border-dashed border-[var(--border)] animate-fade-up stagger-4">
+    <a
+      href="/blog"
+      class="font-mono text-sm text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-2"
+    >
+      <span class="text-[var(--accent)] opacity-60">&lt;</span>
+      cd ../blog
+    </a>
+  </div>
+
+  <script>
+    function updateProgress() {
+      const bar = document.getElementById('progress-bar');
+      if (!bar) return;
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = `${Math.min(progress, 100)}%`;
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  </script>
+</BaseLayout>

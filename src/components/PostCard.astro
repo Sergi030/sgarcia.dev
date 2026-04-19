@@ -1,0 +1,67 @@
+---
+interface Props {
+  post: {
+    id: string;
+    data: {
+      title: string;
+      description: string;
+      pubDate: Date;
+      tags: string[];
+    };
+    remarkPluginFrontmatter?: {
+      minutesRead?: string;
+    };
+  };
+  index?: number;
+}
+
+const { post, index = 0 } = Astro.props;
+const { title, description, pubDate, tags } = post.data;
+
+const formattedDate = pubDate.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+---
+
+<article class:list={['animate-fade-up', `stagger-${Math.min(index + 2, 8)}`]}>
+  <a
+    href={`/blog/${post.id}/`}
+    class="group block py-4 px-4 hover:bg-[var(--accent-dim)] transition-all duration-200"
+  >
+    <!-- File-listing style row -->
+    <div class="flex items-start gap-3 font-mono text-sm">
+      <!-- File icon / permissions -->
+      <span class="text-[var(--text-muted)] opacity-50 hidden sm:inline whitespace-nowrap pt-0.5">
+        -rw-r--r--
+      </span>
+
+      <!-- Date as modified time -->
+      <time
+        datetime={pubDate.toISOString()}
+        class="text-[var(--text-muted)] whitespace-nowrap shrink-0 pt-0.5"
+      >
+        {formattedDate}
+      </time>
+
+      <!-- Title + description -->
+      <div class="min-w-0 flex-1">
+        <h3 class="text-[var(--text)] group-hover:text-[var(--accent)] transition-colors font-medium truncate">
+          {title}
+        </h3>
+        <p class="text-[var(--text-muted)] text-xs mt-1 line-clamp-1 font-sans">
+          {description}
+        </p>
+        {tags.length > 0 && (
+          <div class="flex flex-wrap gap-1.5 mt-1.5">
+            {tags.map((tag) => (
+              <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--tag-bg)] text-[var(--tag-text)] border border-[var(--accent)]/10">
+                --{tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+
+  </a>
+  <!-- Separate clickable tag links (outside main <a> to avoid nested links) -->
+
+</article>

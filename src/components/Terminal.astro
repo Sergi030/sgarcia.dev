@@ -1,0 +1,66 @@
+---
+import { sitePages, siteSocials } from '../data/navigation';
+const termData = [
+  ...sitePages.map(p => ({ label: p.termLabel, href: p.href, type: 'dir' })),
+  ...siteSocials.map(s => ({ label: s.termLabel, href: s.href, type: 'link' })),
+];
+---
+<script type="application/json" id="term-data" set:html={JSON.stringify(termData)} />
+
+<!-- Terminal Overlay (Ctrl+`) -->
+<div id="terminal-overlay" class="fixed inset-0 z-[200] hidden" role="dialog" aria-modal="true" aria-label="Terminal">
+  <div id="term-backdrop" class="absolute inset-0 bg-black/70"></div>
+
+  <div class="relative max-w-2xl w-full mx-auto px-4 top-1/2 -translate-y-1/2">
+    <!-- Terminal window -->
+    <div class="rounded-lg overflow-hidden shadow-2xl shadow-[var(--accent)]/5 border border-[var(--border)]">
+      <!-- Title bar -->
+      <div class="bg-[var(--bg-alt)] px-4 py-2 flex items-center gap-2 border-b border-[var(--border)]">
+        <div class="flex gap-1.5">
+          <div id="term-close-btn" class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer hover:brightness-110"></div>
+          <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#28c840]"></div>
+        </div>
+        <span class="text-[11px] font-mono text-[var(--text-muted)] ml-2">mehcachis@barcelona — bash — 80×24</span>
+      </div>
+
+      <!-- Terminal body -->
+      <div class="bg-[var(--bg)] p-4 font-mono text-sm min-h-[200px] max-h-[60vh] overflow-y-auto" id="term-body">
+        <!-- History / output -->
+        <div id="term-history">
+          <div class="text-[var(--text-muted)] text-xs mb-3">Last login: <span id="term-login-date"></span> on ttys000</div>
+        </div>
+
+        <!-- Active prompt line -->
+        <div class="flex items-center gap-0">
+          <span class="text-[var(--accent)] shrink-0">mehcachis@barcelona</span>
+          <span class="text-[var(--text-muted)] shrink-0">:</span>
+          <span class="text-blue-400 shrink-0">~</span>
+          <span class="text-[var(--text-muted)] shrink-0">$&nbsp;</span>
+          <div class="relative flex-1">
+            <input
+              id="term-input"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              class="w-full bg-transparent text-[var(--text)] outline-none caret-transparent font-mono text-sm"
+            />
+            <span id="term-cursor" class="absolute top-0 h-full w-[8px] bg-[var(--accent)] animate-blink pointer-events-none" style="left: 0"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hint bar -->
+    <div class="mt-2 flex justify-center gap-4 font-mono text-[10px] text-[var(--text-muted)]">
+      <span>↑↓ history</span>
+      <span>tab autocomplete</span>
+      <span>type <span class="text-[var(--accent)]">help</span> for commands</span>
+      <span>esc quit</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/terminal';
+</script>

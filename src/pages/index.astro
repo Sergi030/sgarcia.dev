@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { socialLinks } from '../data/navigation';
+import { features } from '../config';
+
+const heroSocials = socialLinks.filter(l => l.label !== 'rss');
+
+const socialIcons: Record<string, string> = {
+  github: '<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>',
+  linkedin: '<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>',
+  email: '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>',
+};
+
+const recentPosts = features.blog
+  ? (await getCollection('blog', ({ data }) => !data.draft))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+      .slice(0, 3)
+  : [];
+---
+
+<BaseLayout title="Home" description="Sergi Garcia Ibañez — Embedded Software Engineer & Team Lead based in Barcelona.">
+  <!-- Terminal Hero -->
+  <section class="pt-6 pb-16">
+    <!-- Prompt line with typing effect -->
+    <div class="font-mono text-sm text-[var(--text-muted)] mb-8 animate-fade-up">
+      <span class="text-[var(--accent)]">mehcachis@barcelona</span><span class="opacity-40">:</span><span class="text-[var(--text)]">~</span><span class="opacity-40">$</span>
+      <span class="ml-1" id="typed-cmd"></span>
+      <span class="inline-block w-2 h-4 bg-[var(--accent)] ml-0.5 align-middle animate-blink"></span>
+    </div>
+
+    <script>
+      import { onReady } from '../utils/onReady';
+      onReady(() => {
+        const el = document.getElementById('typed-cmd');
+        if (!el || el.dataset.typed) return;
+        el.dataset.typed = '1';
+        const text = 'whoami';
+        let i = 0;
+        const interval = setInterval(() => {
+          el.textContent = text.slice(0, ++i);
+          if (i === text.length) clearInterval(interval);
+        }, 80);
+      });
+    </script>
+
+    <!-- Name -->
+    <h1 class="font-mono text-4xl sm:text-5xl font-bold tracking-tighter text-[var(--text)] mb-6 animate-fade-up stagger-1 leading-[1.1]">
+      <span class="relative inline-block group cursor-default">
+        <span class="group-hover:opacity-0 transition-opacity">Sergi Garcia</span>
+        <span class="absolute inset-0 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true">Sergi Garcia</span>
+      </span>
+      <br />
+      <span class="text-[var(--text-muted)] text-2xl sm:text-3xl font-normal tracking-tight">Ibañez</span>
+    </h1>
+
+    <!-- Role -->
+    <div class="font-mono text-sm space-y-1.5 mb-8 animate-fade-up stagger-2">
+      <p class="text-[var(--text-muted)]">
+        <span class="text-[var(--accent)] opacity-60">&gt;</span>
+        Embedded Software Engineer & Team Lead at
+        <a href="https://www.worldsensing.com" target="_blank" rel="noopener noreferrer" class="text-[var(--accent-text)] hover:underline underline-offset-2">Worldsensing</a>
+      </p>
+      <p class="text-[var(--text-muted)]">
+        <span class="text-[var(--accent)] opacity-60">&gt;</span>
+        IoT · LoRa · Python · C++ · Yocto · Embedded Systems
+      </p>
+      <p class="text-[var(--text-muted)]">
+        <span class="text-[var(--accent)] opacity-60">&gt;</span>
+        From bits to REST APIs · I've touched every layer
+      </p>
+    </div>
+
+    <!-- Links as terminal output -->
+    <div class="flex flex-wrap gap-4 font-mono text-xs animate-fade-up stagger-3">
+      {heroSocials.map((link) => (
+        <a
+          href={link.href}
+          target={link.href.startsWith('http') ? '_blank' : undefined}
+          rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+          class="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors flex items-center gap-1.5 border border-[var(--border)] px-3 py-1.5 rounded hover:border-[var(--accent)]/30 hover:bg-[var(--accent-dim)]"
+        >
+          <Fragment set:html={socialIcons[link.label] || ''} />
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <div class="flex items-center gap-3 mb-8 font-mono text-xs text-[var(--text-muted)] opacity-30 animate-fade-up stagger-4">
+    <div class="flex-1 border-t border-dashed border-[var(--border)]"></div>
+    <span>ls -lt ./blog | head -3</span>
+    <div class="flex-1 border-t border-dashed border-[var(--border)]"></div>
+  </div>
+
+  {features.blog && recentPosts.length > 0 && (
+    <section class="animate-fade-up stagger-5">
+      <div class="flex items-baseline justify-between mb-4">
+        <h2 class="font-mono text-sm text-[var(--text-muted)]">
+          <span class="text-[var(--accent)]">recent</span> posts
+        </h2>
+        <a
+          href="/blog"
+          class="font-mono text-xs text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+        >
+          view all →
+        </a>
+      </div>
+
+      <div class="border border-[var(--border)] rounded-md divide-y divide-[var(--border)] bg-[var(--bg-alt)]">
+        {recentPosts.map((post, i) => (
+          <PostCard post={post} index={i} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {!features.blog && (
+    <section class="animate-fade-up stagger-5">
+      <div class="border border-dashed border-[var(--border)] rounded-md bg-[var(--bg-alt)] px-5 py-6 font-mono text-xs">
+        <div class="text-[var(--text-muted)] mb-2">
+          <span class="text-[var(--accent)]">mehcachis@barcelona</span><span class="opacity-40">:</span><span class="text-[var(--text)]">~</span><span class="opacity-40">$</span>
+          <span class="ml-1">ls ./blog</span>
+        </div>
+        <div class="text-[var(--text-muted)]">
+          <span class="text-amber-400">warning:</span> directory empty — <span class="text-[var(--accent)]">coming soon</span>
+          <span class="inline-block w-1.5 h-3 bg-[var(--accent)] ml-0.5 align-middle animate-blink"></span>
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

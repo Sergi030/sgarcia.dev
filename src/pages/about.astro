@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About" description="About Sergi Garcia Ibañez — Embedded Software Engineer & Team Lead in Barcelona.">
+  <section class="pt-4">
+    <!-- Terminal header -->
+    <div class="font-mono text-xs text-[var(--text-muted)] mb-6 animate-fade-up">
+      <span class="text-[var(--accent)]">mehcachis@barcelona</span><span class="opacity-40">:</span><span class="text-[var(--text)]">~</span><span class="opacity-40">$</span>
+      <span class="ml-1">cat about.txt</span>
+    </div>
+
+    <h1 class="font-mono text-2xl sm:text-3xl font-bold text-[var(--text)] mb-8 tracking-tight animate-fade-up stagger-1">
+      About
+    </h1>
+
+    <!-- Bio + photo side by side -->
+    <div class="flex flex-col sm:flex-row gap-5 mb-12 animate-fade-up stagger-2">
+      <!-- Photo as terminal file preview -->
+      <div class="shrink-0 sm:order-last">
+        <div class="border border-[var(--border)] rounded-md overflow-hidden bg-[var(--bg-alt)] w-36 rotate-3 hover:rotate-0 hover:scale-105 transition-all duration-300 shadow-lg shadow-black/20">
+          <img
+            src="/images/avatar.jpg"
+            alt="Sergi Garcia Ibañez"
+            class="w-full aspect-square object-cover"
+          />
+          <div class="px-1.5 py-1 font-mono text-[9px] text-[var(--text-muted)] border-t border-[var(--border)]">
+            <span class="text-[var(--accent)] opacity-50">sergi.jpg</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-[var(--text-muted)] leading-relaxed flex-1">
+      <p>
+        I'm <span class="text-[var(--text)]">Sergi Garcia Ibañez</span>, an Embedded Software Engineer and Team Lead based in
+        <span class="text-[var(--text)]">Barcelona, Catalonia</span>. I lead the Connectivity & Gateways team at
+        <a href="https://www.worldsensing.com" target="_blank" rel="noopener noreferrer" class="text-[var(--accent-text)] hover:underline underline-offset-2">Worldsensing</a>,
+        where we monitor critical civil infrastructure (mines, tunnels, bridges, dams) and geotechnical and environmental assets.
+      </p>
+      <p>
+        We use LoRa-based wireless sensor nodes powered by batteries that send messages to
+        <span class="text-[var(--text)]">gateways</span>: custom edge devices running embedded Linux on a single core with 256 MB of RAM. That's where my team works.
+        The gateways collect sensor data and have a local web interface to visualize nodes, graphs, and export data via
+        <span class="text-[var(--text)]">MQTT</span>, <span class="text-[var(--text)]">FTP</span>, <span class="text-[var(--text)]">Modbus TCP</span>, and <span class="text-[var(--text)]">REST API</span>.
+      </p>
+      <p>
+        Outside of work, I like to cook, play video games, take care of my plants, and go bowling or play <a href="https://fr.wikipedia.org/wiki/Jeux_de_palets" target="_blank" rel="noopener noreferrer" class="text-[var(--accent-text)] hover:underline underline-offset-2">palets</a> when I can.
+      </p>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="flex items-center gap-3 mb-8 font-mono text-xs text-[var(--text-muted)] opacity-30 animate-fade-up stagger-3">
+      <div class="flex-1 border-t border-dashed border-[var(--border)]"></div>
+      <span>pip list --format=columns</span>
+      <div class="flex-1 border-t border-dashed border-[var(--border)]"></div>
+    </div>
+
+    <!-- Skills table -->
+    <div class="animate-fade-up stagger-3 mb-12">
+      <h2 class="font-mono text-sm text-[var(--accent)] mb-4">technologies</h2>
+      <div class="border border-[var(--border)] rounded-md bg-[var(--bg-alt)] overflow-hidden">
+        <table class="w-full font-mono text-xs">
+          <thead>
+            <tr class="border-b border-[var(--border)] text-[var(--text-muted)]">
+              <th class="text-left px-4 py-2 font-medium">Package</th>
+              <th class="text-left px-4 py-2 font-medium">Category</th>
+            </tr>
+          </thead>
+          <tbody class="text-[var(--text)]">
+            {[
+              ['Python', 'language'],
+              ['C++', 'language'],
+              ['Embedded Linux', 'platform'],
+              ['ARM64', 'architecture'],
+              ['IoT', 'connectivity'],
+              ['LoRa', 'connectivity'],
+              ['D-Bus', 'connectivity'],
+              ['MQTT', 'protocol'],
+              ['Modbus TCP', 'protocol'],
+              ['FTP', 'protocol'],
+              ['REST API', 'protocol'],
+              ['Git', 'tooling'],
+              ['Docker', 'tooling'],
+              ['CI/CD', 'tooling'],
+            ].map(([pkg, cat]) => (
+              <tr class="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--accent-dim)] transition-colors">
+                <td class="px-4 py-1.5 text-[var(--accent-text)]">{pkg}</td>
+                <td class="px-4 py-1.5 text-[var(--text-muted)]">{cat}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Languages -->
+    <div class="animate-fade-up stagger-4 mb-12">
+      <h2 class="font-mono text-sm text-[var(--accent)] mb-4">locale --list</h2>
+      <div class="font-mono text-sm space-y-1 text-[var(--text-muted)]">
+        <p><span class="text-[var(--text)]">ca_ES</span> <span class="opacity-40">—</span> Catalan <span class="text-[var(--accent)] opacity-50">(native)</span></p>
+        <p><span class="text-[var(--text)]">es_ES</span> <span class="opacity-40">—</span> Spanish <span class="text-[var(--accent)] opacity-50">(native)</span></p>
+        <p><span class="text-[var(--text)]">en_US</span> <span class="opacity-40">—</span> English <span class="text-[var(--accent)] opacity-50">(intermediate)</span></p>
+      </div>
+    </div>
+
+    <!-- Timeline: parallel education & work tracks -->
+    <div class="animate-fade-up stagger-5">
+      <h2 class="font-mono text-sm text-[var(--accent)] mb-4">./timeline --split=edu,work</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <!-- Education track -->
+        <div>
+          <div class="font-mono text-[11px] text-blue-400 mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            education
+          </div>
+          <div class="relative pl-6">
+            <div class="absolute left-[7px] top-2 bottom-2 w-px bg-[var(--border)]"></div>
+            {[
+              ['2019 → 2023', 'Degree in Computer Engineering',    'UPC'],
+              ['2017 → 2019', 'CFGS: "Desarrollo de Aplicaciones Multiplataforma"', 'INS Provençana'],
+              ['2015 → 2017', 'CFGM: "Sistemas Microinformáticos y Redes"',        'Escola del Treball'],
+            ].map(([period, title, org]) => (
+              <div class="relative mb-4 last:mb-0">
+                <span class="absolute -left-6 top-1.5 w-3 h-3 rounded-full bg-blue-400 border-2 border-[var(--bg)]"></span>
+                <div class="font-mono">
+                  <div class="text-blue-400 text-[11px]">{period}</div>
+                  <div class="text-[var(--text)] text-sm mt-0.5">{title}</div>
+                  <div class="text-[var(--text-muted)] text-xs mt-0.5">{org}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Work track -->
+        <div>
+          <div class="font-mono text-[11px] text-[var(--accent)] mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[var(--accent)]"></span>
+            work
+          </div>
+          <div class="relative pl-6">
+            <div class="absolute left-[7px] top-2 bottom-2 w-px bg-[var(--border)]"></div>
+            {[
+              ['2023-03 → now',     'Team Lead — Connectivity & Gateways', 'Worldsensing'],
+              ['2020-01 → 2023-03', 'Embedded Software Engineer',          'Worldsensing'],
+              ['2017-06 → 2020-01', 'Junior Firmware Engineer',            'Worldsensing'],
+              ['2017-05 → 2017-06', 'Firmware Intern',                     'Worldsensing'],
+            ].map(([period, title, org]) => (
+              <div class="relative mb-4 last:mb-0">
+                <span class="absolute -left-6 top-1.5 w-3 h-3 rounded-full bg-[var(--accent)] border-2 border-[var(--bg)]"></span>
+                <div class="font-mono">
+                  <div class="text-[var(--accent-text)] text-[11px]">{period}</div>
+                  <div class="text-[var(--text)] text-sm mt-0.5">{title}</div>
+                  <div class="text-[var(--text-muted)] text-xs mt-0.5">{org}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</BaseLayout>

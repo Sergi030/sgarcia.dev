@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { features } from '../../../config';
+
+if (!features.blog) return Astro.redirect('/404');
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+
+const tagCounts = new Map<string, number>();
+posts.forEach((post) => {
+  post.data.tags.forEach((tag) => {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  });
+});
+
+const sortedTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="Tags" description="Browse all blog post tags.">
+  <section class="pt-4">
+    <div class="font-mono text-xs text-[var(--text-muted)] mb-6 animate-fade-up">
+      <span class="text-[var(--accent)]">mehcachis@barcelona</span><span class="opacity-40">:</span><span class="text-[var(--text)]">~/blog</span><span class="opacity-40">$</span>
+      <span class="ml-1">grep -r "tags:" --count</span>
+    </div>
+
+    <h1 class="font-mono text-2xl sm:text-3xl font-bold text-[var(--text)] mb-2 tracking-tight animate-fade-up stagger-1">
+      Tags
+    </h1>
+    <p class="font-mono text-sm text-[var(--text-muted)] mb-8 animate-fade-up stagger-1">
+      {sortedTags.length} unique tag{sortedTags.length !== 1 ? 's' : ''}
+    </p>
+
+    <div class="flex flex-wrap gap-2 animate-fade-up stagger-2">
+      {sortedTags.map(([tag, count]) => (
+        <a
+          href={`/blog/tags/${tag}/`}
+          class="font-mono text-sm px-3 py-1.5 rounded-md border border-[var(--border)] bg-[var(--bg-alt)]
+                 text-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 hover:bg-[var(--accent-dim)]
+                 transition-all duration-200 inline-flex items-center gap-2"
+        >
+          <span>--{tag}</span>
+          <span class="text-xs opacity-50">{count}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

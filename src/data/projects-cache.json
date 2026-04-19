@@ -1,0 +1,29 @@
+[
+  {
+    "repo": "Sergi030/vim-sisa-syntax",
+    "name": "vim-sisa-syntax",
+    "description": "Syntax highlight for SISA (Simple Instruction Set Architecture) ",
+    "url": "https://github.com/Sergi030/vim-sisa-syntax",
+    "language": "Vim Script",
+    "stars": 1,
+    "updatedAt": "2026-04-08T00:51:44Z"
+  },
+  {
+    "repo": "Sergi030/dotfiles",
+    "name": "dotfiles",
+    "description": "My dotfiles: i3wm, Vim, tmux, zsh, termite.",
+    "url": "https://github.com/Sergi030/dotfiles",
+    "language": "Shell",
+    "stars": 1,
+    "updatedAt": "2026-04-05T00:45:32Z"
+  },
+  {
+    "repo": "Sergi030/personal-webpage",
+    "name": "sgarcia.dev",
+    "description": "This website. A personal blog built with Astro, Tailwind CSS 4, and deployed to GitHub Pages.",
+    "url": "https://github.com/Sergi030/personal-webpage",
+    "language": "Astro",
+    "stars": 0,
+    "updatedAt": null
+  }
+]

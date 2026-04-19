@@ -1,0 +1,42 @@
+---
+---
+
+<!-- Flash-free theme detection — runs synchronously before paint -->
+<script is:inline>
+  (function applyTheme() {
+    const theme = localStorage.getItem('theme') ??
+      (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.classList.toggle('dark', theme !== 'light');
+  })();
+  document.addEventListener('astro:after-swap', function() {
+    var theme = localStorage.getItem('theme') ??
+      (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.classList.toggle('dark', theme !== 'light');
+  });
+</script>
+
+<button
+  aria-label="Toggle theme"
+  class="theme-toggle group relative w-8 h-8 flex items-center justify-center rounded
+         text-[var(--text-muted)] hover:text-[var(--accent)]
+         border border-transparent hover:border-[var(--border)]
+         transition-all duration-200 cursor-pointer font-mono text-xs"
+>
+  <!-- Terminal-style toggle -->
+  <span class="block dark:hidden" aria-hidden="true">☀</span>
+  <span class="hidden dark:block" aria-hidden="true">☾</span>
+</button>
+
+<script>
+  function setupThemeToggles() {
+    document.querySelectorAll('.theme-toggle').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    });
+  }
+
+  import { onReady } from '../utils/onReady';
+  onReady(setupThemeToggles);
+</script>
