@@ -22,7 +22,21 @@
     const PARTICLE_COUNT = Math.min(Math.floor((width * height) / 18000), 80);
     const CONNECTION_DIST = 150;
     const MOUSE_RADIUS = 200;
-    const ACCENT = { r: 0, g: 255, b: 200 }; // #00ffc8
+    const ACCENT_DARK = { r: 0, g: 255, b: 200 };  // #00ffc8
+    const ACCENT_LIGHT = { r: 37, g: 99, b: 235 }; // #2563eb
+    let isDark = document.documentElement.classList.contains('dark');
+    let ACCENT = isDark ? ACCENT_DARK : ACCENT_LIGHT;
+    let alphaBoost = isDark ? 1 : 1.8;
+
+    const themeObserver = new MutationObserver(() => {
+      const nowDark = document.documentElement.classList.contains('dark');
+      if (nowDark !== isDark) {
+        isDark = nowDark;
+        ACCENT = isDark ? ACCENT_DARK : ACCENT_LIGHT;
+        alphaBoost = isDark ? 1 : 1.8;
+      }
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
     interface Particle {
       x: number;
@@ -86,7 +100,7 @@
 
         // Draw particle
         const mouseProximity = Math.max(0, 1 - dist / MOUSE_RADIUS);
-        const alpha = 0.15 + mouseProximity * 0.4;
+        const alpha = (0.15 + mouseProximity * 0.4) * alphaBoost;
         ctx!.beginPath();
         ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx!.fillStyle = `rgba(${ACCENT.r}, ${ACCENT.g}, ${ACCENT.b}, ${alpha})`;
@@ -105,7 +119,7 @@
             const midY = (p.y + p2.y) / 2;
             const mouseDist = Math.sqrt((midX - mouse.x) ** 2 + (midY - mouse.y) ** 2);
             const mouseBoost = Math.max(0, 1 - mouseDist / MOUSE_RADIUS) * 0.12;
-            const lineAlpha = (1 - cdist / CONNECTION_DIST) * 0.06 + mouseBoost;
+            const lineAlpha = ((1 - cdist / CONNECTION_DIST) * 0.06 + mouseBoost) * alphaBoost;
 
             ctx!.beginPath();
             ctx!.moveTo(p.x, p.y);
@@ -144,6 +158,7 @@
     // Cleanup on navigation
     document.addEventListener('astro:before-swap', () => {
       cancelAnimationFrame(animationId);
+      themeObserver.disconnect();
       (canvas as any).__initialized = false;
     });
   }
