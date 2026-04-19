@@ -15,6 +15,26 @@ const fullTitle = title === 'Home' ? 'Sergi Garcia Ibañez' : `${title} — Serg
 // Auto-generate OG image path from current URL
 const ogSlug = Astro.url.pathname === '/' ? 'default' : Astro.url.pathname.replace(/^\/|\/$/g, '');
 const ogImage = image || `/og/${ogSlug}.png`;
+
+const isHome = Astro.url.pathname === '/';
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Sergi Garcia Ibañez',
+  url: Astro.site?.toString(),
+  image: new URL('/images/avatar.jpg', Astro.site).toString(),
+  jobTitle: 'Embedded Software Engineer & Team Lead',
+  email: 'mailto:me@sgarcia.dev',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Barcelona',
+    addressCountry: 'ES',
+  },
+  sameAs: [
+    'https://github.com/Sergi030',
+    'https://linkedin.com/in/sergi-garcia-ibanez',
+  ],
+};
 ---
 
 <!-- Global Metadata -->
@@ -47,6 +67,9 @@ const ogImage = image || `/og/${ogSlug}.png`;
 
 <!-- RSS -->
 {features.blog && <link rel="alternate" type="application/rss+xml" title="Sergi's Blog" href="/rss.xml" />}
+
+<!-- Schema.org Person (homepage only) -->
+{isHome && <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />}
 
 <!-- Umami Analytics -->
 <script defer src="https://cloud.umami.is/script.js" data-website-id="073c1a18-0831-4c8c-a9aa-3029271d6464"></script>
