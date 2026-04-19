@@ -172,6 +172,7 @@ const searchConfig = { pagefindEnabled: features.blog };
           if (!current) return;
           if (current.classList.contains('hidden')) {
             current.classList.remove('hidden');
+            (window as any).umami?.track('command-palette-open');
             if (currentInput) {
               currentInput.value = '';
               requestAnimationFrame(() => currentInput.focus());

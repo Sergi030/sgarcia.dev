@@ -22,6 +22,7 @@
     document.addEventListener('keydown', onKey);
 
     function triggerMatrix() {
+      (window as any).umami?.track('konami-matrix');
       const canvas = document.createElement('canvas');
       canvas.style.cssText = 'position:fixed;inset:0;z-index:9999;pointer-events:none;';
       document.body.appendChild(canvas);

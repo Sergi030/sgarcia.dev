@@ -69,10 +69,10 @@ function setupTerminal() {
     const lines = [
       '$ sudo su', '[sudo] password for mehcachis: ********', '',
       'root@barcelona:~# ACCESS GRANTED', '',
-      '  █���████��  ██████╗  ██████╗ ████████╗',
-      '  ██╔══█���╗██╔═��═██╗██╔═══██╗╚══██╔══���',
+      '  ██████╗  ██████╗  ██████╗ ████████╗',
+      '  ██╔══██╗██╔═══██╗██╔═══██╗╚══██╔══╝',
       '  ██████╔╝██║   ██║██║   ██║   ██║   ',
-      '  ██╔══██╗██���   ██║██║   ██║   █��║   ',
+      '  ██╔══██╗██║   ██║██║   ██║   ██║   ',
       '  ██║  ██║╚██████╔╝╚██████╔╝   ██║   ',
       '  ╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ',
       '', 'Welcome, root. You have full access.', 'Just kidding — nice try though ;)',
@@ -238,6 +238,7 @@ function setupTerminal() {
         if (!current) return;
         if (current.classList.contains('hidden')) {
           current.classList.remove('hidden');
+          (window as any).umami?.track('terminal-open');
           if (currentInput) {
             currentInput.value = '';
             requestAnimationFrame(() => currentInput.focus());
