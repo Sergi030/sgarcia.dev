@@ -5,9 +5,12 @@ const year = new Date().getFullYear();
 
 <footer class="border-t border-[var(--border)] mt-24">
   <div class="max-w-3xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[var(--text-muted)]">
-    <p>
-      <span class="text-[var(--accent)] opacity-60">&gt;</span> &copy; {year} sergi garcia ibañez
-    </p>
+    <div class="flex flex-col gap-1 text-center sm:text-left">
+      <p>
+        <span class="text-[var(--accent)] opacity-60">&gt;</span> &copy; {year} sergi garcia ibañez
+      </p>
+      <p class="opacity-60 text-[10px]">anonymous analytics via <a href="https://umami.is" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent)] underline decoration-dotted underline-offset-2">umami</a></p>
+    </div>
     <div class="flex items-center gap-3 flex-wrap justify-center">
       {socialLinks.map((link, i) => (
         <>
