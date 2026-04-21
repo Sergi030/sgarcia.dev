@@ -18,7 +18,7 @@
     "@fontsource-variable/instrument-sans": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@tailwindcss/vite": "^4.2.2",
-    "astro": "^6.1.4",
+    "astro": "^6.1.6",
     "mdast-util-to-string": "^4.0.0",
     "pagefind": "^1.5.0",
     "reading-time": "^1.5.0",
